@@ -1,0 +1,103 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    <h1 class="text-2xl font-bold mb-4">Dashboard</h1>
+
+    <!-- File Counts Overview -->
+    <h3 class="text-xl mb-4">File Counts Overview:</h3>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+        <!-- Bar Chart for File Counts -->
+        <div class="flex flex-col h-full bg-white p-4 rounded shadow-md">
+            <h3 class="text-xl mb-4">File Count Bar Chart:</h3>
+            <canvas id="fileCountsChart" class="w-full h-48"></canvas> <!-- Adjusted to h-48 -->
+        </div>
+
+        <!-- Doughnut Chart for Storage Summary -->
+        <div class="flex flex-col h-full bg-white p-4  max-h-80"> <!-- Added max-h-80 -->
+            <h3 class="text-xl mb-4">Storage Summary:</h3>
+            <canvas id="storageSummaryChart" class="w-full h-48"></canvas> <!-- Adjusted to h-48 -->
+
+            {% comment %} <div class="mt-6">
+                <p><strong>Space Used:</strong> {{ space_used|floatformat:0 }} MB</p>
+                <p><strong>Space Remaining:</strong> {{ space_remaining|floatformat:0 }} MB</p>
+                <p><strong>Total Storage Limit:</strong> {{ storage_limit|floatformat:0 }} MB</p>
+            </div> {% endcomment %}
+        </div>
+    </div>
+</div>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            // Data for the bar chart (File Counts)
+            const folderCounts = {
+                labels: [{% for folder_name, count in folder_counts.items %}'{{ folder_name }}',{% endfor %}],  // Folder names
+                datasets: [{
+                    label: 'File Counts',
+                    data: [{% for folder_name, count in folder_counts.items %}{{ count }},{% endfor %}],  // File counts
+                    backgroundColor: '#024CAA',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            };
+
+            // Bar chart configuration
+            const fileCountsConfig = {
+                type: 'bar',
+                data: folderCounts,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            enabled: true
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            };
+
+            // Render File Counts Bar Chart
+            const ctxBar = document.getElementById('fileCountsChart').getContext('2d');
+            new Chart(ctxBar, fileCountsConfig);
+
+            // Data for the doughnut chart (Storage Summary)
+            const storageSummary = {
+                labels: ['Space Used', 'Space Remaining'],
+                datasets: [{
+                    data: [{{ space_used|floatformat:0 }}, {{ space_remaining|floatformat:0 }}],
+                    backgroundColor: ['#FF5733', '#024CAA'],
+                    hoverOffset: 4
+                }]
+            };
+
+            // Doughnut chart configuration
+            const storageConfig = {
+                type: 'doughnut',
+                data: storageSummary,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            enabled: true
+                        }
+                    }
+                }
+            };
+
+            // Render Storage Summary Doughnut Chart
+            const ctxDoughnut = document.getElementById('storageSummaryChart').getContext('2d');
+            new Chart(ctxDoughnut, storageConfig);
+        </script>
+    </div>
+{% endblock %}

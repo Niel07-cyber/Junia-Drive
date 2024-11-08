@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Sign Up - JuniaDrive</title>
+    {% comment %} {% static "" %}%} {% endcomment %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+</head>
+<body>
+    <div id="toast-container"></div>
+    <div class="flex justify-center items-center h-screen bg-gray-100">
+        <!-- Container -->
+        <div class="flex w-1/3 justify-between items-center border rounded-lg gap-5 p-10 shadow-lg bg-white">
+            <div class="w-full">
+                <div class="flex justify-center items-center gap-2 my-5">
+                    {% comment %} <img src="{% static 'images/junialogo.jpg' %}" alt="Logo" class="nav-logo" width='50px' /> {% endcomment %}
+                    <h2 class="text-center font-bold text-2xl pb-2">JuniaDrive</h2>
+                </div>
+                <p class="text-left font-bold mb-4">Create Your Account</p>
+                <form method="POST">
+                    {% csrf_token %}
+                    <!-- Username -->
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input 
+                            type="text" 
+                            name="username" 
+                            id="username" 
+                            class="outline-none border-2 border-gray-300 rounded-lg w-full p-2"
+                            placeholder="Enter your username" 
+                            required 
+                        />
+                    </div>
+                    
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input 
+                            type="email" 
+                            name="email" 
+                            id="email" 
+                            class="outline-none border-2 border-gray-300 rounded-lg w-full p-2"
+                            placeholder="Enter your email" 
+                            required 
+                        />
+                    </div>
+
+                    <!-- Password -->
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input 
+                            type="password" 
+                            name="password" 
+                            id="password" 
+                            class="outline-none border-2 border-gray-300 rounded-lg w-full p-2"
+                            placeholder="Enter your password" 
+                            required 
+                        />
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="mb-3">
+                        <label for="cpassword" class="form-label">Confirm Password</label>
+                        <input 
+                            type="password" 
+                            name="cpassword" 
+                            id="cpassword" 
+                            class="outline-none border-2 border-gray-300 rounded-lg w-full p-2"
+                            placeholder="Re-enter your password" 
+                            required 
+                        />
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="mt-5 pt-1 pb-2 bg-[#ff613f] text-white text-center text-lg w-full rounded">
+                        Sign Up
+                    </button>
+                </form>
+
+                <!-- Display messages -->
+                <div class="mt-4">
+                    {% if messages %}
+                    <ul>
+                        {% for message in messages %}
+                        <li class="text-red-500">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+
+                <p class="text-center text-sm mt-4">
+                    Already have an account? <a href="{% url 'login' %}" class="text-blue-500 hover:text-blue-700">Login</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to display Toast notifications
+        function showToast(type, message) {
+            Toastify({
+                text: message,
+                duration: 3000,
+                close: true,
+                gravity: "top", // Toast will appear at the top
+                position: "right", // Toast will appear on the right
+                backgroundColor: type === "success" ? "green" : "red",
+                stopOnFocus: true // Will not disappear when you hover over it
+            }).showToast();
+        }
+
+        // Display Toast based on Django messages
+        {% if messages %}
+            {% for message in messages %}
+                <script>
+                    showToast("{{ message.tags }}", "{{ message }}");
+                </script>
+            {% endfor %}
+        {% endif %}
+    </script>
+</body>
+</html>
